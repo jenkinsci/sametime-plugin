@@ -1,0 +1,10 @@
+Short term tasks:
+
+- Add better logging.
+- Provide help-html fragments for the GUI
+- Code cleanups
+
+TODO
+
+- Connect to Jabber-Plugin Author to maybe join efforts.  This code has been written with that in mind from the get-go, hence the use of the Jabber classes
+- Full unit tests.  Sametime's API is almost exclusively "factory/abstract class", making it difficult to create mocks.  Using jMock was unsuccessful due to weird classpath errors in trying to find asm (which exists on my classpath).
