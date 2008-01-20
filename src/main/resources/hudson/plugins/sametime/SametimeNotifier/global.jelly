@@ -1,0 +1,26 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <j:set var="base" value="${rootURL}/plugin/sametime" />
+
+  <f:section title="Sametime Notification">
+    <f:entry title="Sametime ID" help="${base}/help-id.html">
+      <f:textbox name="${descriptor.PARAMETERNAME_USERNAME}"
+        value="${descriptor.hudsonUserName}" />
+    </f:entry>
+    <f:entry title="Password">
+      <input type="password" name="${descriptor.PARAMETERNAME_PASSWORD}"
+        class="setting-input" value="${descriptor.hudsonPassword}" />
+    </f:entry>
+    <f:entry title="Server" help="${base}/help-server.html">
+      <f:textbox name="${descriptor.PARAMETERNAME_HOSTNAME}"
+        value="${descriptor.hostName}" />
+    </f:entry>
+    <f:advanced>
+      <f:entry title="Port" help="${base}/help-port.html">
+        <f:textbox name="${descriptor.PARAMETERNAME_PORT}"
+          value="${descriptor.portString}" />
+      </f:entry>
+    </f:advanced>
+  </f:section>
+</j:jelly>

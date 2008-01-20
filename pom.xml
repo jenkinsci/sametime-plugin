@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>plugin</artifactId>
-    <groupId>org.jvnet.hudson.plugins</groupId>
-    <version>1.171</version>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.174</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
   <artifactId>sametime</artifactId>
   <packaging>hpi</packaging>
   <version>0.1</version>
+  <name>Hudson Sametime Plugin</name>
   <dependencies>
-    <dependency><!--  This will need to be downloaded from IBM -->
+    <dependency>
       <groupId>com.lotus.sametime</groupId>
-      <artifactId>STComm</artifactId>
-      <version>7.0</version>
+        <artifactId>STComm</artifactId>
+        <version>7.0</version>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>sametime-libs</id>
+      <url>file:${project.basedir}/lib</url>
+    </repository>
+  </repositories>
 </project>
 
