@@ -1,6 +1,6 @@
 package hudson.plugins.sametime;
 
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
 import hudson.model.Result;
 import hudson.plugins.sametime.tools.Assert;
 
@@ -19,10 +19,10 @@ public enum NotificationStrategy {
          * {@inheritDoc}
          */
         @Override
-        public boolean notificationWanted(final Build<?,?> build)
+        public boolean notificationWanted(final AbstractBuild<?,?> build)
         {
             Assert.isNotNull(build, "Parameter 'build' must not be null.");
-            final Build<?,?> previousBuild = build.getPreviousBuild();
+            final AbstractBuild<?,?> previousBuild = build.getPreviousBuild();
             return (previousBuild == null) || (build.getResult() != previousBuild.getResult());
         }
     },
@@ -35,7 +35,7 @@ public enum NotificationStrategy {
          * {@inheritDoc}
          */
         @Override
-        public boolean notificationWanted(final Build build)
+        public boolean notificationWanted(final AbstractBuild<?,?> build)
         {
             return true;
         }
@@ -49,7 +49,7 @@ public enum NotificationStrategy {
          * {@inheritDoc}
          */
         @Override
-        public boolean notificationWanted(final Build<?,?> build)
+        public boolean notificationWanted(final AbstractBuild<?,?> build)
         {
             Assert.isNotNull(build, "Parameter 'build' must not be null.");
             return build.getResult() != Result.SUCCESS;
@@ -62,6 +62,6 @@ public enum NotificationStrategy {
      * @param build The build for which it should be decided, if notification is wanted or not. 
      * @return true if, according to the given strategy, a notification should be sent.
      */
-    public abstract boolean notificationWanted(Build<?,?> build);
+    public abstract boolean notificationWanted(AbstractBuild<?,?> build);
 
 }

@@ -1,7 +1,7 @@
 package hudson.plugins.sametime.im;
 
 import hudson.Launcher;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Hudson;
 import hudson.model.Result;
@@ -119,7 +119,7 @@ public abstract class IMPublisher extends Publisher
     }
 
     @Override
-    public boolean perform(final Build<?,?> build, final Launcher launcher, final BuildListener buildListener)
+    public boolean perform(final AbstractBuild<?,?> build, final Launcher launcher, final BuildListener buildListener)
             throws InterruptedException, IOException
     {
         Assert.isNotNull(build, "Parameter 'build' must not be null.");
@@ -193,10 +193,10 @@ public abstract class IMPublisher extends Publisher
     }
 
 	/* (non-Javadoc)
-	 * @see hudson.tasks.Publisher#prebuild(hudson.model.Build, hudson.model.BuildListener)
+	 * @see hudson.tasks.Publisher#prebuild(hudson.model.AbstractBuild, hudson.model.BuildListener)
 	 */
 	@Override
-	public boolean prebuild(Build build, BuildListener buildListener) {
+	public boolean prebuild(AbstractBuild build, BuildListener buildListener) {
 		try {
 			if (notifyOnBuildStart) {
 				final StringBuffer sb = new StringBuffer("Starting build ").append(build.getNumber())
