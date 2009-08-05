@@ -40,7 +40,7 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
 
     private final CyclicBarrier listenBarrier;
 
-    private final Map<String, SametimeIMMessageTarget> resolutionMap;
+    private static final Map<String, SametimeIMMessageTarget> resolutionMap = new HashMap<String, SametimeIMMessageTarget>();
     private final ResolveListenerImpl resolveListener;
 
     /**
@@ -57,7 +57,6 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
         resolver.addResolveListener(resolveListener);
 
         listenBarrier = new CyclicBarrier(2);
-        resolutionMap = new HashMap<String, SametimeIMMessageTarget>();
     }
 
     /* (non-Javadoc)
@@ -67,6 +66,13 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
     {
         if(StringUtils.isEmpty(targetAsString))
             return null;
+
+        
+        if( resolutionMap.containsKey(targetAsString) ){
+        	SametimeIMMessageTarget user = resolutionMap.get(targetAsString);
+        	log.info("Already known target ["+ targetAsString +"] as ["+ user.getUser().getName() +"]. Will not try to resolve again.");
+        	return resolutionMap.get(targetAsString);
+        }
 
         listenBarrier.reset();
 
