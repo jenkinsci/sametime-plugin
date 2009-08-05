@@ -12,7 +12,8 @@ import hudson.plugins.sametime.im.IMPublisher;
 import hudson.plugins.sametime.tools.Assert;
 import hudson.tasks.Publisher;
 
-import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Sametime-specific implementation of the IMPublisher
@@ -22,7 +23,7 @@ import java.io.PrintStream;
  */
 public class SametimePublisher extends IMPublisher
 {
-    private static PrintStream log = System.out;
+	private static final Logger log = Logger.getLogger(SametimePublisher.class.getName());
 
     static final SametimePublisherDescriptor DESCRIPTOR = new SametimePublisherDescriptor();
 
@@ -79,8 +80,7 @@ public class SametimePublisher extends IMPublisher
             }
             catch (IMException e)
             {
-                log.println("IMException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "IMException caught!", e);
             }
         }
         return SametimePublisher.CONVERTER;

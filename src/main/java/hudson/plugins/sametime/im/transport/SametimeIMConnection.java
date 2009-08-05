@@ -9,7 +9,8 @@ import hudson.plugins.sametime.im.IMMessageTarget;
 import hudson.plugins.sametime.im.IMPresence;
 import hudson.plugins.sametime.im.transport.bot.SametimeNotificationBot;
 
-import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.lotus.sametime.community.CommunityService;
 import com.lotus.sametime.community.Login;
@@ -33,7 +34,7 @@ class SametimeIMConnection implements IMConnection, LoginListener
     private CommunityService commService;
     private Login login;
     private InstantMessagingService imService;
-    private static PrintStream log = System.out;
+    private static final Logger log = Logger.getLogger(SametimeIMConnection.class.getName());
 
     /**
      * Constructor.
@@ -43,29 +44,27 @@ class SametimeIMConnection implements IMConnection, LoginListener
     {
         try
         {
-            log.println("Creating ST Session.");
+            log.info("Creating ST Session.");
             session = new STSession("HudsonNotifierSession");
-            log.println("Loading ST Components.");
+            log.info("Loading ST Components.");
             session.loadSemanticComponents();
-            log.println("Starting ST Session.");
+            log.info("Starting ST Session.");
             session.start();
 
             commService = (CommunityService) session.getCompApi(CommunityService.COMP_NAME);
             commService.addLoginListener(this);
-            log.println("Attempting login.");
+            log.info("Attempting login.");
             commService.loginByPassword(desc.getHostname(), desc.getHudsonNickname(), desc.getHudsonPassword());
         }
         catch (DuplicateObjectException e)
         {
-            log.println("DuplicateObjectException caught!");
-            e.printStackTrace(log);
+            log.log(Level.SEVERE, "DuplicateObjectException caught!", e);
         }
     }
 
     /* (non-Javadoc)
      * @see hudson.plugins.sametime.im.IMConnection#close()
      */
-    @Override
     public void close()
     {
         commService.logout();
@@ -76,12 +75,11 @@ class SametimeIMConnection implements IMConnection, LoginListener
     /* (non-Javadoc)
      * @see hudson.plugins.sametime.im.IMConnection#send(hudson.plugins.sametime.im.IMMessageTarget, java.lang.String)
      */
-    @Override
     public void send(IMMessageTarget target, String text) throws IMException
     {
-        log.println("Opening IM session with target.");
         SametimeIMMessageTarget stTarget = (SametimeIMMessageTarget)target;
 
+        log.info("Opening IM session with target: "+ stTarget.getUser().getName());
         Im im = imService.createIm(stTarget.getUser(), EncLevel.ENC_LEVEL_ALL, ImTypes.IM_TYPE_CHAT);
         im.addImListener(new SametimeNotificationBot(text));
 
@@ -91,7 +89,6 @@ class SametimeIMConnection implements IMConnection, LoginListener
     /* (non-Javadoc)
      * @see hudson.plugins.sametime.im.IMConnection#setPresence(hudson.plugins.sametime.im.IMPresence)
      */
-    @Override
     public void setPresence(IMPresence presence) throws IMException
     {
         if(null == login || !commService.isLoggedIn())
@@ -122,13 +119,12 @@ class SametimeIMConnection implements IMConnection, LoginListener
     /* (non-Javadoc)
      * @see com.lotus.sametime.community.LoginListener#loggedIn(com.lotus.sametime.community.LoginEvent)
      */
-    @Override
     public void loggedIn(LoginEvent le)
     {
-        log.println("Loggedin successfully.");
+        log.info("Loggedin successfully.");
         login = le.getLogin();
 
-        log.println("Registering for IM Service.");
+        log.info("Registering for IM Service.");
         imService = (InstantMessagingService) session.getCompApi(InstantMessagingService.COMP_NAME);
         imService.registerImType(ImTypes.IM_TYPE_CHAT);
     }
@@ -136,7 +132,6 @@ class SametimeIMConnection implements IMConnection, LoginListener
     /* (non-Javadoc)
      * @see com.lotus.sametime.community.LoginListener#loggedOut(com.lotus.sametime.community.LoginEvent)
      */
-    @Override
     public void loggedOut(LoginEvent le)
     {
         session.stop();

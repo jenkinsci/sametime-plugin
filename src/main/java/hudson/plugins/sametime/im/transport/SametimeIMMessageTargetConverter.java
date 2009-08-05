@@ -8,13 +8,14 @@ import hudson.plugins.sametime.im.IMMessageTargetConversionException;
 import hudson.plugins.sametime.im.IMMessageTargetConverter;
 import hudson.plugins.sametime.tools.Assert;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -35,7 +36,7 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
 {
     private final LookupService lookupService;
     private final Resolver resolver;
-    private final PrintStream log = System.out;
+    private static final Logger log = Logger.getLogger(SametimeIMMessageTargetConverter.class.getName());
 
     private final CyclicBarrier listenBarrier;
 
@@ -49,7 +50,7 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
     public SametimeIMMessageTargetConverter(STSession stsession)
     {
         // Get a handle to the Lookup Service and add a resolve listener
-        log .println("Registering for Lookup Service.");
+        log.info("Registering for Lookup Service.");
         lookupService = (LookupService) stsession.getCompApi(LookupService.COMP_NAME);
         resolver = lookupService.createResolver(true, false, true, false);
         resolveListener = new ResolveListenerImpl();
@@ -79,18 +80,15 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
         }
         catch (InterruptedException e)
         {
-            log.println("InterruptedException caught!");
-            e.printStackTrace(log);
+        	log.log(Level.SEVERE, "InterruptedException caught!", e);
         }
         catch (BrokenBarrierException e)
         {
-            log.println("BrokenBarrierException caught!");
-            e.printStackTrace(log);
+        	log.log(Level.SEVERE, "BrokenBarrierException caught!", e);
         }
         catch (TimeoutException e)
         {
-            log.println("TimeoutException caught!");
-            e.printStackTrace(log);
+        	log.log(Level.SEVERE, "TimeoutException caught!", e);
         }
 
         return resolutionMap.get(targetAsString);
@@ -140,10 +138,9 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
         /* (non-Javadoc)
          * @see com.lotus.sametime.lookup.ResolveListener#resolveConflict(com.lotus.sametime.lookup.ResolveEvent)
          */
-        @Override
         public void resolveConflict(ResolveEvent arg0)
         {
-            log.println("Resolution of " + target + " caused a conflict.");
+            log.info("Resolution of " + target + " caused a conflict.");
 
             try
             {
@@ -152,28 +149,24 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
             }
             catch (InterruptedException e)
             {
-                log.println("InterruptedException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "InterruptedException caught!", e);
             }
             catch (BrokenBarrierException e)
             {
-                log.println("BrokenBarrierException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "BrokenBarrierException caught!", e);
             }
             catch (TimeoutException e)
             {
-                log.println("TimeoutException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "TimeoutException caught!", e);
             }
         }
 
         /* (non-Javadoc)
          * @see com.lotus.sametime.lookup.ResolveListener#resolveFailed(com.lotus.sametime.lookup.ResolveEvent)
          */
-        @Override
         public void resolveFailed(ResolveEvent re)
         {
-            log.println("Resolution of " + target + " failed.");
+            log.info("Resolution of " + target + " failed.");
 
             try
             {
@@ -182,25 +175,21 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
             }
             catch (InterruptedException e)
             {
-                log.println("InterruptedException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "InterruptedException caught!", e);
             }
             catch (BrokenBarrierException e)
             {
-                log.println("BrokenBarrierException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "BrokenBarrierException caught!", e);
             }
             catch (TimeoutException e)
             {
-                log.println("TimeoutException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "TimeoutException caught!", e);
             }
         }
 
         /* (non-Javadoc)
          * @see com.lotus.sametime.lookup.ResolveListener#resolved(com.lotus.sametime.lookup.ResolveEvent)
          */
-        @Override
         public void resolved(ResolveEvent re)
         {
             // we've managed to look up the supplied user in the directory, and now have an object for them
@@ -208,7 +197,7 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
             {
                 STUser user = (STUser) re.getResolved();
                 String userName = user.getName();
-                log.println("Resolved to '" + userName + "'.");
+                log.info("Resolved to '" + userName + "'.");
 
                 // create our representation of them as a target
                 SametimeIMMessageTarget imTarget = new SametimeIMMessageTarget(user, target);
@@ -221,18 +210,15 @@ public class SametimeIMMessageTargetConverter implements IMMessageTargetConverte
             }
             catch (InterruptedException e)
             {
-                log.println("InterruptedException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "InterruptedException caught!", e);
             }
             catch (BrokenBarrierException e)
             {
-                log.println("BrokenBarrierException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "BrokenBarrierException caught!", e);
             }
             catch (TimeoutException e)
             {
-                log.println("TimeoutException caught!");
-                e.printStackTrace(log);
+            	log.log(Level.SEVERE, "TimeoutException caught!", e);
             }
         }
     }

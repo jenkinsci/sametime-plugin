@@ -3,7 +3,8 @@
  */
 package hudson.plugins.sametime.im.transport.bot;
 
-import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.lotus.sametime.im.ImEvent;
 
@@ -15,8 +16,7 @@ import com.lotus.sametime.im.ImEvent;
  */
 public class SametimeNotificationBot extends SametimeDefaultBot
 {
-    @SuppressWarnings("unused")
-    private static PrintStream log = System.out;
+    private static final Logger log = Logger.getLogger(SametimeNotificationBot.class.getName());
     private final String notificationMessage;
 
     /**
@@ -35,7 +35,7 @@ public class SametimeNotificationBot extends SametimeDefaultBot
     @Override
     public void imOpened(ImEvent ie)
     {
-        ie.getIm().sendText(true, notificationMessage);
+    	ie.getIm().sendText(true, notificationMessage);
         // give it time to arrive
         try
         {
@@ -43,7 +43,7 @@ public class SametimeNotificationBot extends SametimeDefaultBot
         }
         catch (InterruptedException e)
         {
-            log.println("InterruptedException caught!");
+            log.log(Level.SEVERE, "InterruptedException caught!", e);
         }
         ie.getIm().close(0);
     }
