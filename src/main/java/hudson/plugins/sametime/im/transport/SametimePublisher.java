@@ -3,6 +3,7 @@
  */
 package hudson.plugins.sametime.im.transport;
 
+import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.plugins.sametime.im.IMConnection;
 import hudson.plugins.sametime.im.IMException;
@@ -10,6 +11,7 @@ import hudson.plugins.sametime.im.IMMessageTargetConversionException;
 import hudson.plugins.sametime.im.IMMessageTargetConverter;
 import hudson.plugins.sametime.im.IMPublisher;
 import hudson.plugins.sametime.tools.Assert;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 
 import java.util.logging.Level;
@@ -25,7 +27,8 @@ public class SametimePublisher extends IMPublisher
 {
 	private static final Logger log = Logger.getLogger(SametimePublisher.class.getName());
 
-    static final SametimePublisherDescriptor DESCRIPTOR = new SametimePublisherDescriptor();
+    @Extension
+    public static final SametimePublisherDescriptor DESCRIPTOR = new SametimePublisherDescriptor();
 
     private static IMMessageTargetConverter CONVERTER;
 
@@ -50,7 +53,8 @@ public class SametimePublisher extends IMPublisher
     /* (non-Javadoc)
      * @see hudson.model.Describable#getDescriptor()
      */
-    public Descriptor<Publisher> getDescriptor()
+    @Override
+    public BuildStepDescriptor<Publisher> getDescriptor()
     {
         return SametimePublisher.DESCRIPTOR;
     }

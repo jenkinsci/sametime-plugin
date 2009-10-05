@@ -4,12 +4,14 @@
 package hudson.plugins.sametime.im.transport;
 
 import hudson.Util;
-import hudson.util.FormFieldValidator;
+import hudson.model.AbstractProject;
+import hudson.util.FormValidation;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.plugins.sametime.im.IMException;
 import hudson.plugins.sametime.im.IMMessageTargetConversionException;
 import hudson.plugins.sametime.tools.Assert;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -19,6 +21,8 @@ import javax.servlet.ServletException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.io.IOException;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Descriptor for the SametimePublisher.  A Descriptor is an object that has metadata about a {@link Describable}
@@ -27,7 +31,7 @@ import java.io.IOException;
  * @author Jamie Burrell
  * @since 18 Jan 2008
  */
-public class SametimePublisherDescriptor extends Descriptor<Publisher>
+public class SametimePublisherDescriptor extends BuildStepDescriptor<Publisher>
 {
     private static final String PREFIX = "sametimePlugin.";
     /** Name for the PORT parameter, as it appears in the jelly scripts   */
@@ -256,11 +260,16 @@ public class SametimePublisherDescriptor extends Descriptor<Publisher>
     	return this.commandPrefix;
     }
 
+    @Override
+    public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+        return true;
+    }
+
     /**
      * Creates a new instance of {@link SametimePublisher} from a submitted form.
      */
     @Override
-    public SametimePublisher newInstance(final StaplerRequest req) throws FormException
+    public SametimePublisher newInstance(final StaplerRequest req, JSONObject formData) throws FormException
     {
         Assert.isNotNull(req, "Parameter 'req' must not be null.");
         final String t = req.getParameter(SametimePublisherDescriptor.PARAMETERNAME_TARGETS);
@@ -308,7 +317,7 @@ public class SametimePublisherDescriptor extends Descriptor<Publisher>
 	 * @see hudson.model.Descriptor#configure(org.kohsuke.stapler.StaplerRequest)
 	 */
 	@Override
-	public boolean configure(StaplerRequest req) throws hudson.model.Descriptor.FormException {
+	public boolean configure(StaplerRequest req, JSONObject formData) throws hudson.model.Descriptor.FormException {
 		Assert.isNotNull(req, "Parameter 'req' must not be null.");
 
         applyPresence(req);
@@ -328,7 +337,7 @@ public class SametimePublisherDescriptor extends Descriptor<Publisher>
             throw new FormException("Unable to create Client: " + e, null);
         }
         save();
-        return super.configure(req);
+        return super.configure(req, formData);
 	}
 
     /**
@@ -338,23 +347,16 @@ public class SametimePublisherDescriptor extends Descriptor<Publisher>
      * @throws IOException
      * @throws ServletException
      */
-    public void doServerCheck(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        new FormFieldValidator(req, rsp, false) {
-            @Override
-            protected void check() throws IOException, ServletException {
-                String v = Util.fixEmptyAndTrim(request.getParameter("value"));
-                if (v == null)
-                    ok();
-                else {
-                    try {
-                        InetAddress.getByName(v);
-                        ok();
-                    } catch (UnknownHostException e) {
-                        error("Unknown host "+v);
-                    }
-                }
+    public FormValidation doServerCheck(@QueryParameter final String value) {
+        String v = Util.fixEmptyAndTrim(value);
+        if (v != null) {
+            try {
+                InetAddress.getByName(v);
+            } catch (UnknownHostException e) {
+                return FormValidation.error("Unknown host "+v);
             }
-        }.process();
+        }
+        return FormValidation.ok();
     }
 
     /**

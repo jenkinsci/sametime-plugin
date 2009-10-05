@@ -10,7 +10,8 @@ import hudson.plugins.sametime.im.transport.SametimePublisherDescriptor;
 import hudson.plugins.sametime.tools.Assert;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
-import hudson.tasks.Publisher;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.Set;
  * @author Uwe Schaefer
  *
  */
-public abstract class IMPublisher extends Publisher
+public abstract class IMPublisher extends Notifier
 {
     private static final IMMessageTargetConverter CONVERTER = new DefaultIMMessageTargetConverter();
     private final List<IMMessageTarget> targets = new LinkedList<IMMessageTarget>();
@@ -245,7 +246,12 @@ public abstract class IMPublisher extends Publisher
 		return suspects;
 	}
 
+    @Override
     public boolean needsToRunAfterFinalized() {
         return true;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 }
