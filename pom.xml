@@ -9,7 +9,7 @@
   </parent>
   <artifactId>sametime</artifactId>
   <packaging>hpi</packaging>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <name>Jenkins Sametime Plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/SameTime+Plugin</url>
   <dependencies>
