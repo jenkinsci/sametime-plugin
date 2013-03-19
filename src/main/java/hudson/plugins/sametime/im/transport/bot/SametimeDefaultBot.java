@@ -17,7 +17,7 @@ import com.lotus.sametime.im.ImListener;
  */
 public class SametimeDefaultBot implements ImListener
 {
-    public static final String DEFAULT_MESSAGE = "Sorry, but I am a bot, and don't respond to input.";
+    //public static final String DEFAULT_MESSAGE = "Sorry, but I am a bot, and don't respond to input.";
 
     private static final Logger log = Logger.getLogger(SametimeDefaultBot.class.getName());
 
@@ -26,8 +26,8 @@ public class SametimeDefaultBot implements ImListener
      */
     public void dataReceived(ImEvent ie)
     {
-    	//FIXME Handle WHAT text is recieved. In SAmetime Connect 7.5.1 sends default message with notifications.
-        ie.getIm().sendText(true, DEFAULT_MESSAGE);
+    	//FIXME Handle WHAT text is recieved. In Sametime Connect 7.5.1 sends default message with notifications.
+        //ie.getIm().sendText(true, DEFAULT_MESSAGE);
     }
 
     /* (non-Javadoc)
@@ -60,7 +60,7 @@ public class SametimeDefaultBot implements ImListener
      */
     public void textReceived(ImEvent ie)
     {
-    	//FIXME Handle WHAT text is recieved. In SAmetime Connect 7.5.1 sends default message with notifications.
+    	log.info("FIXME Handle WHAT text is recieved. In Sametime Connect 7.5.1 sends default message with notifications.");
         ie.getIm().sendText(true, DEFAULT_MESSAGE);
     }
 
