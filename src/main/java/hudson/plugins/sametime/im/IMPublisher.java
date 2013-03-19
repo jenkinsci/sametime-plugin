@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The actual Publisher that sends notification-Messages out to the clients.
@@ -33,6 +35,7 @@ public abstract class IMPublisher extends Notifier
     private final boolean notifyOnBuildStart;
     private final boolean notifySuspects;
     private final boolean notifyFixers;
+    private static final Logger log = Logger.getLogger(IMPublisher.class.getName());
 
     protected IMPublisher(final String targetsAsString, final String notificationStrategyString,
     		final boolean notifyGroupChatsOnBuildStart,
@@ -40,17 +43,25 @@ public abstract class IMPublisher extends Notifier
     		final boolean notifyFixers) throws IMMessageTargetConversionException
     {
         Assert.isNotNull(targetsAsString, "Parameter 'targetsAsString' must not be null.");
-        final String[] split = targetsAsString.split("\\s");
-        final IMMessageTargetConverter conv = getIMMessageTargetConverter();
-        for (final String fragment : split)
+
+        final String[] split = targetsAsString.split(",");
+        final IMMessageTargetConverter messageTargetConverter = getIMMessageTargetConverter();
+        for (final String target : split)
         {
-            IMMessageTarget createIMMessageTarget;
-            createIMMessageTarget = conv.fromString(fragment);
-            if (createIMMessageTarget != null)
+            log.info("target:" + target);
+            final String targetClean = target.trim();
+            log.info("targetClean:" + targetClean);
+            IMMessageTarget messageTarget = messageTargetConverter.fromString(targetClean);
+            if (messageTarget != null)
             {
-                this.targets.add(createIMMessageTarget);
+                log.info("messageTarget:" + messageTarget.toString());
+                this.targets.add(messageTarget);
+            }
+            else{
+                log.info("messageTarget is null!!");
             }
         }
+        log.info("targets:" + this.targets.toString());
         if (notificationStrategyString == null) {
         	this.notificationStrategy = NotificationStrategy.STATECHANGE_ONLY;
         } else if (notificationStrategyString.equals(SametimePublisherDescriptor.PARAMETERVALUE_STRATEGY_ALL)) {
@@ -80,20 +91,26 @@ public abstract class IMPublisher extends Notifier
 
     private List<IMMessageTarget> getNotificationTargets()
     {
+        log.info("getNotificationTargets.this.target:" + this.targets);
         return this.targets;
     }
 
     public final String getTargets()
     {
         final StringBuffer sb = new StringBuffer();
-        for (final IMMessageTarget t : this.targets)
+        int count = 0;
+        for (final IMMessageTarget target : this.targets)
         {
-        	if (t instanceof GroupChatIMMessageTarget && ! t.toString().contains("@conference.")) {
+        	if (target instanceof GroupChatIMMessageTarget && ! target.toString().contains("@conference.")) {
         		sb.append("*");
         	}
-            sb.append(t.toString());
-            sb.append(" ");
+            sb.append(target.toString());
+            if(count < targets.size() -1 ){
+                sb.append(", ");
+            }
+            count ++;
         }
+        log.info("getTargets" + sb.toString().trim());
         return sb.toString().trim();
     }
 
@@ -151,7 +168,8 @@ public abstract class IMPublisher extends Notifier
             {
                 try
                 {
-                    buildListener.getLogger().append("Sending notification to: " + target.toString() + "\n");
+                    buildListener.getLogger().append("Sending Sametime notification to:\"" + target.toString() + "\"" + "\n");
+                    buildListener.getLogger().append("Sending Sametime message: " + msg + "\n");
                     getIMConnection().send(target, msg);
                 }
                 catch (final Throwable e)
