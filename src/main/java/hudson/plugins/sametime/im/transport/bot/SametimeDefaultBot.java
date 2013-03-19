@@ -17,7 +17,7 @@ import com.lotus.sametime.im.ImListener;
  */
 public class SametimeDefaultBot implements ImListener
 {
-    //public static final String DEFAULT_MESSAGE = "Sorry, but I am a bot, and don't respond to input.";
+    public static final String DEFAULT_MESSAGE = "Sorry, but I am a bot, and don't respond to input.";
 
     private static final Logger log = Logger.getLogger(SametimeDefaultBot.class.getName());
 
