@@ -23,6 +23,8 @@ import java.net.UnknownHostException;
 import java.io.IOException;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.QueryParameter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Descriptor for the SametimePublisher.  A Descriptor is an object that has metadata about a {@link Describable}
@@ -33,6 +35,7 @@ import org.kohsuke.stapler.QueryParameter;
  */
 public class SametimePublisherDescriptor extends BuildStepDescriptor<Publisher>
 {
+    private static final Logger log = Logger.getLogger(SametimeIMConnection.class.getName());
     private static final String PREFIX = "sametimePlugin.";
     /** Name for the PORT parameter, as it appears in the jelly scripts   */
     public static final String PARAMETERNAME_PORT = SametimePublisherDescriptor.PREFIX + "port";
